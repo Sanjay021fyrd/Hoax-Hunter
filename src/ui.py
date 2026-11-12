@@ -47,11 +47,9 @@ def esc(value: object) -> str:
 def hero() -> str:
     return (
         '<div class="hero">'
-        '<div class="eyebrow">Scam intelligence</div>'
         '<div class="hero__title">Hoax Hunter</div>'
-        '<div class="hero__rule"></div>'
-        '<div class="hero__tag">Paste any suspicious message. '
-        "Know in seconds whether to trust it, and exactly why.</div>"
+        '<div class="hero__tag">Got a message that feels off? '
+        "Paste it below to see whether it looks like a scam, and why.</div>"
         "</div>"
     )
 
@@ -64,52 +62,35 @@ def micro_label(text: str) -> str:
     return f'<div class="micro">{esc(text)}</div>'
 
 
-def gauge(score: int, rated: bool = True) -> str:
-    """Circular risk meter drawn with CSS only (st.html strips <svg>)."""
+def meter(score: int, rated: bool = True) -> str:
+    """Flat risk bar, drawn with CSS only (st.html strips <svg>)."""
     score = max(0, min(100, int(score)))
-    if not rated:  # no opinion: empty ring and a question mark
+    if not rated:  # no opinion: say so instead of showing a made-up number
         return (
-            '<div class="gauge" role="img" aria-label="Not rated" style="--p:0">'
-            '<div class="gauge__ring"></div>'
-            '<div class="gauge__label"><div class="gauge__num">?</div>'
-            '<div class="gauge__sub">Not rated</div></div>'
-            "</div>"
+            '<div class="meter__label"><b>Not rated.</b> '
+            "Hoax Hunter has no opinion on the wording.</div>"
         )
     return (
-        f'<div class="gauge" role="img" aria-label="Risk score {score} out of 100" '
-        f'style="--p:{score}">'
-        '<div class="gauge__ring"></div>'
-        f'<div class="gauge__label"><div class="gauge__num">{score}</div>'
-        '<div class="gauge__sub">Risk / 100</div></div>'
-        "</div>"
-    )
-
-
-def _stat(label: str, value: str, unit: str = "") -> str:
-    small = f"<small>{esc(unit)}</small>" if unit else ""
-    return (
-        f'<div class="stat"><div class="stat__label">{esc(label)}</div>'
-        f'<div class="stat__value">{esc(value)}{small}</div></div>'
+        f'<div class="meter__label">Risk score <b>{score}</b> out of 100</div>'
+        f'<div class="meter" role="img" aria-label="Risk score {score} out of 100" '
+        f'style="--p:{score}"><div class="meter__fill"></div></div>'
     )
 
 
 def verdict_card(a: Analysis) -> str:
     tone, headline, summary = TONES[a.verdict]
     ml = "n/a" if a.ml_probability is None else f"{a.ml_probability:.0%}"
-    stats = (
-        _stat("AI model", ml)
-        + _stat("Rule engine", str(a.rule_score), "/ 100")
-        + _stat("Red flags", str(len(a.flags)))
+    facts = (
+        f"Rules: {a.rule_score}/100 &middot; Learning model: {esc(ml)} "
+        f"&middot; Warning signs found: {len(a.flags)}"
     )
     return (
         f'<div class="verdict verdict--{tone}">'
-        f"<div>{gauge(a.score, rated=a.verdict != UNSURE)}</div>"
-        "<div>"
-        '<div class="eyebrow" style="color:var(--tone)">Verdict</div>'
         f'<div class="verdict__title">{esc(headline)}</div>'
         f'<div class="verdict__text">{esc(summary)}</div>'
-        f'<div class="stats">{stats}</div>'
-        "</div></div>"
+        f"{meter(a.score, rated=a.verdict != UNSURE)}"
+        f'<div class="facts">{facts}</div>'
+        "</div>"
     )
 
 
@@ -124,8 +105,7 @@ def _flag_card(flag: Flag) -> str:
     return (
         f'<div class="flag{critical}">'
         '<div class="flag__head">'
-        f'<span class="flag__title">{esc(flag.title)}</span>'
-        f'<span class="flag__meta">{badge}<span class="pill">+{flag.weight}</span></span>'
+        f'<span class="flag__title">{esc(flag.title)}</span>{badge}'
         "</div>"
         f'<p class="flag__text">{esc(flag.explanation)}</p>'
         f"{chips}</div>"
@@ -167,13 +147,12 @@ def sidebar(metrics: dict | None) -> str:
             "Compares the text with thousands of known scam and genuine messages.",
         ),
         (
-            "One clear score",
+            "One score",
             "Both signals are blended into a single 0 to 100 risk score.",
         ),
     )
-    numerals = ("I", "II", "III")
     steps_html = "".join(
-        f'<li data-n="{numerals[i]}"><div><b>{esc(t)}</b>{esc(d)}</div></li>'
+        f'<li data-n="{i + 1}"><div><b>{esc(t)}</b>{esc(d)}</div></li>'
         for i, (t, d) in enumerate(steps)
     )
     out = (
@@ -182,12 +161,13 @@ def sidebar(metrics: dict | None) -> str:
     )
     if metrics:
         out += (
-            '<div class="side__title">Model quality</div>'
+            '<div class="side__title">How accurate is it?</div>'
             f'<div class="qrow">Accuracy<b>{metrics["accuracy"]:.1%}</b></div>'
             f'<div class="qrow">Scams caught<b>{metrics["scam_recall"]:.1%}</b></div>'
             f'<div class="qrow">Precision<b>{metrics["scam_precision"]:.1%}</b></div>'
             f'<div class="side__note">Measured on {metrics["test_size"]} messages '
-            "held back for testing.</div>"
+            "held back for testing. Most of them are older UK and US style texts, "
+            "so expect real-world results to be lower.</div>"
         )
     out += (
         '<div class="side__title">Good to know</div>'

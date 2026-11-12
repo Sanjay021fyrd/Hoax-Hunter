@@ -41,9 +41,9 @@ def test_verdict_card_shows_score_and_tone():
     assert 'style="--p:87"' in card
 
 
-def test_gauge_score_is_clamped():
-    assert "--p:100" in ui.gauge(250)
-    assert "--p:0" in ui.gauge(-5)
+def test_meter_score_is_clamped():
+    assert "--p:100" in ui.meter(250)
+    assert "--p:0" in ui.meter(-5)
 
 
 def test_verdict_card_without_model_says_n_a():
@@ -94,18 +94,19 @@ def test_sidebar_shows_metrics_only_when_available():
         "scam_precision": 0.95,
         "test_size": 1000,
     }
-    assert "Model quality" in ui.sidebar(metrics)
-    assert "Model quality" not in ui.sidebar(None)
+    assert "How accurate is it?" in ui.sidebar(metrics)
+    assert "How accurate is it?" not in ui.sidebar(None)
 
 
-def test_cant_judge_card_has_no_score_and_a_question_mark():
+def test_cant_judge_card_has_no_score_and_says_not_rated():
     card = ui.verdict_card(
         make_analysis(verdict=scorer.UNSURE, score=4, unreadable=True)
     )
     assert "verdict--neutral" in card
     assert "Can't judge" in html.unescape(card)  # the apostrophe is HTML-escaped
-    assert ">?<" in card
+    assert "Not rated" in card
     assert "Risk score" not in card  # we must not show a fake score
+    assert "--p:" not in card  # and no bar
 
 
 def test_cant_judge_advice_and_tone_exist():

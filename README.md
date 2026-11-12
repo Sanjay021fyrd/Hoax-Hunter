@@ -87,7 +87,7 @@ To open it on your phone or another laptop, start the app and open the **Network
 ```
 run.py                  one-command launcher (sets everything up, then starts the app)
 app.py                  Streamlit page (layout + wiring)
-assets/style.css        the dark "noir & gold" theme
+assets/style.css        the plain paper-and-ink theme (large, readable text)
 .streamlit/config.toml  theme colours / Streamlit settings
 src/ui.py               HTML building blocks (verdict card, evidence cards, ...)
 src/rules.py            red-flag rules + link analysis

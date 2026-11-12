@@ -77,8 +77,8 @@ def sample_row(label: str, samples: dict[str, str]) -> None:
         col.button(name, key=f"sample-{name}", on_click=use_sample, args=(text,))
 
 
-sample_row("Scam samples", SCAM_SAMPLES)
-sample_row("Genuine samples", REAL_SAMPLES)
+sample_row("Try a scam:", SCAM_SAMPLES)
+sample_row("Try a real one:", REAL_SAMPLES)
 
 st.text_area(
     "Message to check",
@@ -98,20 +98,20 @@ if st.session_state.get("notice"):
 analyzed_text = st.session_state.get("analyzed_text")
 result = analyze(analyzed_text) if analyzed_text else None
 if result:
-    st.html(ui.section("Analysis"))
+    st.html(ui.section("What I found"))
     st.html(ui.verdict_card(result))
     if result.ml_probability is None and not result.unreadable:
         st.caption(
             "The learning model is unavailable, so only the rule engine was used."
         )
 
-    st.html(ui.section("The evidence"))
+    st.html(ui.section("Why"))
     st.html(ui.evidence(result.flags, unreadable=result.unreadable))
 
-    st.html(ui.section("In your message"))
+    st.html(ui.section("Your message, marked up"))
     st.html(ui.annotated_message(result))
 
-    st.html(ui.section("What to do next"))
+    st.html(ui.section("What to do now"))
     st.html(ui.advice(result))
 
 st.html(ui.footnote())
