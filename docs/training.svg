@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 420" width="1240" height="420" role="img" aria-labelledby="t d">
+  <title id="t">How the Hoax Hunter model is trained</title>
+  <desc id="d">Two datasets are combined and de-duplicated, cleaned, split 80/20, used to train a TF-IDF plus Logistic Regression model, which is evaluated on the held-out 20 percent and then retrained on all data and saved.</desc>
+  <style>
+    text { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; fill: #ece7dd; }
+    .bg { fill: #0a0a0c; }
+    .box { fill: #121216; stroke: #2c2c34; stroke-width: 1.5; }
+    .gold { stroke: #d4af6e; }
+    .h { font-size: 12px; font-weight: 700; letter-spacing: .12em; fill: #d4af6e; }
+    .t { font-size: 16px; font-weight: 700; }
+    .s { font-size: 12px; fill: #8e8a80; font-family: Consolas, "Courier New", monospace; }
+    .b { font-size: 13px; fill: #cfcac0; }
+    .big { font-size: 26px; font-weight: 700; fill: #f2dca5; }
+    .arrow { fill: none; stroke: #d4af6e; stroke-width: 2; }
+    .note { font-size: 12.5px; fill: #8e8a80; }
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#d4af6e"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1240" height="420" rx="18"/>
+  <text x="30" y="40" style="font-size:21px;font-weight:700;fill:#d4af6e">How the model is trained</text>
+
+  <!-- datasets -->
+  <rect class="box" x="30" y="70" width="230" height="110" rx="14"/>
+  <text class="h" x="46" y="96">DATASET 1</text>
+  <text class="t" x="46" y="120">UCI SMS Spam</text>
+  <text class="b" x="46" y="142">5,574 English SMS</text>
+  <text class="s" x="46" y="166">data/sms_spam.csv</text>
+
+  <rect class="box" x="30" y="220" width="230" height="124" rx="14"/>
+  <text class="h" x="46" y="246">DATASET 2</text>
+  <text class="t" x="46" y="270">Handwritten messages</text>
+  <text class="b" x="46" y="292">~165 India-focused msgs</text>
+  <text class="b" x="46" y="310">(scam and genuine)</text>
+  <text class="s" x="46" y="326">data/extra_messages.csv</text>
+
+  <!-- combine -->
+  <rect class="box gold" x="300" y="115" width="160" height="170" rx="14"/>
+  <text class="h" x="316" y="143">1 · COMBINE</text>
+  <text class="b" x="316" y="172">Merge both sets,</text>
+  <text class="b" x="316" y="190">drop duplicates,</text>
+  <text class="b" x="316" y="208">label scam / genuine</text>
+  <text class="s" x="316" y="262">src/data.py</text>
+
+  <!-- clean + split -->
+  <rect class="box gold" x="500" y="105" width="180" height="190" rx="14"/>
+  <text class="h" x="516" y="133">2 · CLEAN + SPLIT</text>
+  <text class="b" x="516" y="162">Links, amounts and</text>
+  <text class="b" x="516" y="180">numbers become tokens</text>
+  <text class="b" x="516" y="210">Stratified split:</text>
+  <text class="b" x="516" y="228">80% train / 20% test</text>
+  <text class="s" x="516" y="276">src/model.py</text>
+
+  <!-- train -->
+  <rect class="box gold" x="720" y="95" width="210" height="210" rx="14"/>
+  <text class="h" x="736" y="123">3 · TRAIN</text>
+  <text class="b" x="736" y="152">TF-IDF features</text>
+  <text class="b" x="736" y="170">  • words (1-2 grams)</text>
+  <text class="b" x="736" y="188">  • characters (3-5 grams)</text>
+  <text class="b" x="736" y="218">Logistic Regression</text>
+  <text class="b" x="736" y="236">(class weights balanced)</text>
+  <text class="s" x="736" y="284">scikit-learn Pipeline</text>
+
+  <!-- outputs -->
+  <rect class="box" x="970" y="60" width="240" height="150" rx="14"/>
+  <text class="h" x="988" y="86">4 · EVALUATE (20% TEST)</text>
+  <text class="big" x="988" y="124">99.0%</text>
+  <text class="b" x="1072" y="124">accuracy</text>
+  <text class="b" x="988" y="150">97.2% of scams caught (recall)</text>
+  <text class="b" x="988" y="170">95.2% precision</text>
+  <text class="note" x="988" y="195">1,066 held-out messages</text>
+
+  <rect class="box gold" x="970" y="230" width="240" height="120" rx="14"/>
+  <text class="h" x="988" y="256">5 · SAVE</text>
+  <text class="b" x="988" y="282">Retrain on all the data,</text>
+  <text class="b" x="988" y="300">then save the model</text>
+  <text class="s" x="988" y="330">models/hoax_model.joblib</text>
+
+  <!-- arrows -->
+  <path class="arrow" d="M260 125 H280 V200 H298" marker-end="url(#ah)"/>
+  <path class="arrow" d="M260 275 H280 V200"/>
+  <path class="arrow" d="M460 200 H498" marker-end="url(#ah)"/>
+  <path class="arrow" d="M680 200 H718" marker-end="url(#ah)"/>
+  <path class="arrow" d="M930 200 H950 V135 H968" marker-end="url(#ah)"/>
+  <path class="arrow" d="M950 200 V290 H968" marker-end="url(#ah)"/>
+
+  <text class="note" x="620" y="392" text-anchor="middle">The model is rebuilt automatically on first run, or when the scikit-learn version on a computer is different.</text>
+</svg>

@@ -19,6 +19,8 @@ Paste a suspicious SMS, WhatsApp message or email and Hoax Hunter tells you if i
 
 ## How it works
 
+<img src="docs/workflow.svg" alt="Workflow: a pasted message is checked by the red-flag rules and the ML model in parallel, the scorer blends them into a 0-100 score and verdict, and the app shows the evidence, highlights and advice">
+
 Two detectors are combined into one score:
 
 | Layer | What it does | Why |
@@ -96,6 +98,10 @@ src/data.py             dataset download / loading
 data/extra_messages.csv handwritten scam + genuine messages (India-focused)
 tests/                  unit tests + headless UI tests
 ```
+
+## How the model is trained
+
+<img src="docs/training.svg" alt="Training pipeline: combine and de-duplicate two datasets, clean and split 80/20, train TF-IDF plus Logistic Regression, evaluate on the held-out 20 percent, then retrain on all data and save">
 
 ## How good is it?
 
