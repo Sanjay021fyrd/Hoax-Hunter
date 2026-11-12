@@ -35,7 +35,12 @@ Verdicts: **Safe** (below 35), **Suspicious** (35-64), **Likely Scam** (65 and a
 
 ## Get the code
 
-The project is in `hoax-hunter.zip` in this repository: download it, unzip it, and open a terminal inside the unzipped project folder (the one that contains `run.py`).
+```bash
+git clone https://github.com/Sanjay021fyrd/Hoax-Hunter.git
+cd Hoax-Hunter
+```
+
+No git? Click the green **Code** button on GitHub and choose **Download ZIP**, then unzip it.
 
 ## Run it
 

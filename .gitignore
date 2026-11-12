@@ -1,0 +1,10 @@
+# private Python environment: never copy this between computers
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# the trained model is rebuilt automatically on first run
+# (it only works with the scikit-learn version that created it)
+models/
